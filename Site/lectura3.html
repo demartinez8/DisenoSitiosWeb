@@ -113,38 +113,38 @@
                     
                     Veamos el siguiente código de ejemplo: </p><br><br>
                     
-                    <pre>
-                    <code>
-                    &lt;!DOCTYPE html&gt;
-                    &lt;html&gt;&lt;head&gt;&lt;meta charset="UTF-8"&gt;&lt;/head&gt;&lt;body&gt;
-                    &lt;?php
-                    echo '&lt;h1&gt;Ejemplo MySQL&lt;/h1&gt;';
-                    // Conectamos con la base de datos
-                    
-                    $db = new PDO('mysql:host=localhost;dbname=dbtest;charset=utf8', 'root', '');
-                    $db-&gt;setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-                    $db-&gt;setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
-                    
-                    try {
-                        $stmt = $db-&gt;prepare("SELECT * FROM articulos WHERE pais=:mycountry");
-                        $stmt-&gt;execute( array(':mycountry' =&gt; 'USA') );
-                        $rows = $stmt-&gt;fetchAll(PDO::FETCH_ASSOC);
-                    } catch(PDOException $ex) {
-                        echo "Ocurrió un error&lt;br&gt;";
-                        echo $ex-&gt;getMessage();
-                        exit;
-                    }
-                    
-                    echo '&lt;ul&gt;';
-                    foreach ($rows as $row) {
-                        echo '&lt;li&gt;'.$row['id'].' : ('.$row['pais'].') '.$row['titulo'].'&lt;/li&gt;';
-                    }
-                    echo '&lt;/ul&gt;';
-                    
-                    ?&gt;
-                    &lt;/body&gt;&lt;/html&gt;
-                    
-                    </code></pre>
+<pre>
+<code>
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta charset="UTF-8"&gt;&lt;/head&gt;&lt;body&gt;
+&lt;?php
+echo '&lt;h1&gt;Ejemplo MySQL&lt;/h1&gt;';
+// Conectamos con la base de datos
+
+$db = new PDO('mysql:host=localhost;dbname=dbtest;charset=utf8', 'root', '');
+$db-&gt;setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+$db-&gt;setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+
+try {
+    $stmt = $db-&gt;prepare("SELECT * FROM articulos WHERE pais=:mycountry");
+    $stmt-&gt;execute( array(':mycountry' =&gt; 'USA') );
+    $rows = $stmt-&gt;fetchAll(PDO::FETCH_ASSOC);
+} catch(PDOException $ex) {
+    echo "Ocurrió un error&lt;br&gt;";
+    echo $ex-&gt;getMessage();
+    exit;
+}
+
+echo '&lt;ul&gt;';
+foreach ($rows as $row) {
+    echo '&lt;li&gt;'.$row['id'].' : ('.$row['pais'].') '.$row['titulo'].'&lt;/li&gt;';
+}
+echo '&lt;/ul&gt;';
+
+?&gt;
+&lt;/body&gt;&lt;/html&gt;
+
+</code></pre>
                     
                     <br>
                     <p class="news-item-preview">En primer lugar, creamos un objeto $db con la información de conexión a base de datos, el usuario (root) y la contraseña (en blanco en este caso). A continuación, mediante los métodos setAttribute() establecemos que el manejo de errores será mediante excepciones, y que no debe emular instrucciones prepare automáticamente.<br><br>
