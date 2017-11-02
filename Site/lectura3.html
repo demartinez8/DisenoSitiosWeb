@@ -42,10 +42,10 @@
   <div class="subnavbar-inner">
     <div class="container">
       <ul class="mainnav">
-        <li class="active">
+        <li>
         	<a href="index.html"><i class="icon-home"></i><span>Inicio</span></a>
         </li>
-        <li class="dropdown">
+        <li class="dropdown active">
         	<a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-book"></i><span>Lecturas</span></a>
             <ul class="dropdown-menu">
                 <li><a href="lectura1.html">Eficiencia en el uso de bases de datos digitales para la producción científica en universidades de Colombia</a></li>
@@ -89,22 +89,84 @@
        <div class="span8">
 
           <div class="widget widget-nopad">
-            <div class="widget-header"> <i class="icon-list-alt"></i>
-              <h3>Proyecto OVI</h3>
+            <div class="widget-header"> <i class="icon-book"></i>
+              <h3>COMO CONECTAR BASE DE DATOS Y LISTAR RESULTADOS CON PHP</h3>
             </div>
             <!-- /widget-header -->
             <div class="widget-content">
               <ul class="news-items">
                 <li>
                   
-                  <div class="news-item-date" align="left"> 
-                  <span class="news-item-day">02</span> 
-                  <span class="news-item-month">Noviembre</span> 
-                  </div>
-                  
-                  <div class="news-item-detail"> 
-                  <a href="javascript:;" class="news-item-title">NUEVO TITULO DEL DETALLE</a>
-                    <p class="news-item-preview"> Detalle del Texto que se Repite Varias Veces Detalle del Texto que se Repite Varias Veces Detalle del Texto que se Repite Varias Veces Detalle del Texto que se Repite Varias Veces Detalle del Texto que se Repite Varias Veces Detalle del Texto que se Repite Varias Veces Detalle del Texto que se Repite Varias Veces Detalle del Texto que se Repite Varias Veces Detalle del Texto que se Repite Varias Veces Detalle del Texto que se Repite Varias Veces ... </p>                   
+                  <div class="news-item-detail"><br>
+                
+                    <p class="news-item-preview"> Utilizar PHP para conectar con una base de datos nos permite tener un almacenamiento seguro en el que centralizar la información que nuestro código empleará para componer lo que se debe visualizar en la web en diversas circunstancias.<br><br>
+
+Para ello podemos utilizar una serie de diferentes extensiones php:<br><br>
+
+mysql : Ya obsoleta.
+mysqli : Una versión más moderna de la librería de conexión con mysql.
+pdo : Librería genérica que permite conectar con muchos motores de bases de datos.
+Utilizaremos la última, ya que conocer su funcionamiento nos servirá con otros motores de bases de datos que no sean MySQL.<br><br>
+
+Esta librería tiene un planteamiento orientado a objetos, donde deberemos crear objetos con new, e invocar ciertos métodos en ellos (funciones del objeto), especificándolos con “-&gt;”. El tratamiento de errores puede ser según el valor que devuelvan las llamadas a los métodos (como hacen gran parte de las funciones al devolver falso en caso de error), o mediante excepciones.<br><br>
+
+Veamos el siguiente código de ejemplo: </p><br><br>
+
+<pre>
+<code>
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta charset="UTF-8"&gt;&lt;/head&gt;&lt;body&gt;
+&lt;?php
+echo '&lt;h1&gt;Ejemplo MySQL&lt;/h1&gt;';
+// Conectamos con la base de datos
+
+$db = new PDO('mysql:host=localhost;dbname=dbtest;charset=utf8', 'root', '');
+$db-&gt;setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+$db-&gt;setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+
+try {
+	$stmt = $db-&gt;prepare("SELECT * FROM articulos WHERE pais=:mycountry");
+	$stmt-&gt;execute( array(':mycountry' =&gt; 'USA') );
+	$rows = $stmt-&gt;fetchAll(PDO::FETCH_ASSOC);
+} catch(PDOException $ex) {
+    echo "Ocurrió un error&lt;br&gt;";
+    echo $ex-&gt;getMessage();
+    exit;
+}
+
+echo '&lt;ul&gt;';
+foreach ($rows as $row) {
+	echo '&lt;li&gt;'.$row['id'].' : ('.$row['pais'].') '.$row['titulo'].'&lt;/li&gt;';
+}
+echo '&lt;/ul&gt;';
+
+?&gt;
+&lt;/body&gt;&lt;/html&gt;
+
+</code></pre>
+
+<br>
+ 			<p class="news-item-preview">En primer lugar, creamos un objeto $db con la información de conexión a base de datos, el usuario (root) y la contraseña (en blanco en este caso). A continuación, mediante los métodos setAttribute() establecemos que el manejo de errores será mediante excepciones, y que no debe emular instrucciones prepare automáticamente.<br><br>
+
+Los errores por excepciones, en lugar de utilizar un valor de devolución en las llamadas, se emplean de manera diferente. Si una o varias líneas de código se ejecutan sin problemas, no pasa nada y se devuelve lo que normalmente se tenga que devolver. Pero si entre esas líneas de código, o dentro de las funciones o métodos a invocar, ocurre un error, se dispara lo que se llama una excepción . Si no se hace nada más, al dispararse se detiene inmediatamente el código, mostrando el mensaje de error del sistema asociado a esa excepción.<br><br>
+
+Las excepciones pueden ser manejadas, si utilizamos una instrucción try-catch como en el ejemplo, todo el código dentro del bloque try estará supervisado por si ocurre algún error. Si se ejecuta sin problemas, se salta la parte catch y continua la ejecución. Pero si alguna de las instrucciones dentro de try genera una excepción, se detiene la ejecución de ese bloque inmediatamente, y se pasa el control al bloque catch, pasando por parámetro el objeto excepción generado, que tendrá en su interior información del mensaje de error, línea de código donde ocurrió, etc.<br><br>
+
+En cualquier caso, no es obligatorio utilizar siempre bloques try-catch , pudiendo dejar que las excepciones detengan por si solas la ejecución. Solamente cuando queremos nosotros capturar el error, para mostrar un mensaje distinto, ocultarlo totalmente, o procesarlo de alguna manera.<br><br>
+
+En nuestro caso, lo utilizamos para crear primero con $db->prepare un objeto stmt , que contiene la preparación de la sentencia SQL que comienza con “SELECT” , que accederá a una tabla artículos para obtener todas las filas cuyo valor de columna country coincida con una asignación predeterminada. A continuación, realizamos la asignación del parámetro mycountry con el valor específico USA para que ese sea el país filtrado, y mediante fetchAll obtenemos de golpe todos los registros en un array, que al especificar PDO::FETCH_ASSOC será asociativo respecto a los índices de las filas y las claves primarias.<br><br>
+
+De esta forma, con un simple foreach al haber obtenido todos los elementos, podemos mostrarlos como en el ejemplo en una lista no ordenada.<br><br>
+
+Este es un ejemplo inicial de uso de base de datos, veremos en otro artículo de forma ampliada como insertar elementos, eliminarlos o buscar entre los diferentes registros.
+
+</p>
+				
+                <br><br>
+                
+				<a href="javascript:;" class="news-item-title">REFERENCIAS BIBLIOGRAFICAS</a><br><br>
+                    <p class="news-item-preview">
+                    Corbí Bellot, A. (2001). Fundamentos de programación. [Alicante]: Digitalia.</p>              
                     
                     <br>
                   </div>
@@ -131,30 +193,6 @@
 
             	<a class="twitter-timeline" href="https://twitter.com/UniversidadUNAD?ref_src=twsrc%5Etfw">Tweets by UniversidadUNAD</a>
 
-            </div>
-            <!-- /widget-content -->             
-          </div>
-          <!-- /widget -->
-          
-          <div class="widget widget-table action-table">
-            <div class="widget-header"> <i class="icon-time"></i><h3>Contador de Visitas</h3></div>
-            <!-- /widget-header -->
-            <div class="widget-content">
-            <br>
-            <center>
-            
-              <div id="sfc41umg6f9eazhmyp3l88yk4u1tr7g5722"></div>
-				
-                <noscript>
-                    <a href="javascript:void(0)" title="Contador de Visitas">
-                    
-                    	<img src="https://counter8.freecounter.ovh/private/contadorvisitasgratis.php?c=41umg6f9eazhmyp3l88yk4u1tr7g5722" border="0">
-                        
-                    </a>
-                </noscript>
-            
-            </center>
-            <br>
             </div>
             <!-- /widget-content -->             
           </div>
